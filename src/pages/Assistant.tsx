@@ -4,13 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { cn } from "@/lib/utils";
-
-interface Message {
-  id: number;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+import { useLegalAssistant } from "@/hooks/useLegalAssistant";
 
 const suggestedQuestions = [
   "What are my tenant rights?",
@@ -20,16 +14,8 @@ const suggestedQuestions = [
 ];
 
 const Assistant = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      role: "assistant",
-      content: "Hello! I'm your AI Legal Assistant. I can help you understand legal concepts, review documents, and guide you through common legal processes. How can I help you today?",
-      timestamp: new Date(),
-    },
-  ]);
+  const { messages, isLoading, sendMessage } = useLegalAssistant();
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -41,42 +27,14 @@ const Assistant = () => {
   }, [messages]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: messages.length + 1,
-      role: "user",
-      content: input.trim(),
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    if (!input.trim() || isLoading) return;
+    sendMessage(input);
     setInput("");
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "That's a great question about legal matters. Based on general legal principles, here's what you should know...",
-        "I understand your concern. In most jurisdictions, the law addresses this by...",
-        "This is a common legal question. Let me break it down for you in simple terms...",
-        "From a legal perspective, there are several factors to consider here...",
-      ];
-      
-      const assistantMessage: Message = {
-        id: messages.length + 2,
-        role: "assistant",
-        content: responses[Math.floor(Math.random() * responses.length)] + " Would you like me to explain any specific aspect in more detail?",
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 1500);
   };
 
   const handleSuggestedQuestion = (question: string) => {
-    setInput(question);
+    if (isLoading) return;
+    sendMessage(question);
   };
 
   return (
@@ -97,8 +55,13 @@ const Assistant = () => {
               <div>
                 <h1 className="font-semibold text-foreground">AI Legal Assistant</h1>
                 <div className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                  <span className="text-xs text-muted-foreground">Online</span>
+                  <span className={cn(
+                    "h-2 w-2 rounded-full",
+                    isLoading ? "bg-amber-500 animate-pulse" : "bg-success"
+                  )} />
+                  <span className="text-xs text-muted-foreground">
+                    {isLoading ? "Thinking..." : "Online"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -139,7 +102,7 @@ const Assistant = () => {
                     : "bg-primary text-primary-foreground rounded-tr-sm"
                 )}
               >
-                <p className="text-sm leading-relaxed">{message.content}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                 <span
                   className={cn(
                     "text-[10px] mt-2 block",
@@ -157,7 +120,7 @@ const Assistant = () => {
             </div>
           ))}
 
-          {isTyping && (
+          {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="flex gap-3 animate-slide-up">
               <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center">
                 <Bot className="h-4 w-4 text-accent" />
@@ -189,7 +152,8 @@ const Assistant = () => {
                 <button
                   key={question}
                   onClick={() => handleSuggestedQuestion(question)}
-                  className="px-4 py-2 bg-card shadow-sm rounded-full text-sm text-foreground hover:bg-accent/10 hover:text-accent transition-colors border border-border"
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-card shadow-sm rounded-full text-sm text-foreground hover:bg-accent/10 hover:text-accent transition-colors border border-border disabled:opacity-50"
                 >
                   {question}
                 </button>
@@ -208,11 +172,12 @@ const Assistant = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="Ask a legal question..."
-            className="flex-1 px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+            disabled={isLoading}
+            className="flex-1 px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all disabled:opacity-50"
           />
           <Button
             onClick={handleSend}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isLoading}
             variant="gold"
             size="icon-lg"
             className="rounded-xl"
