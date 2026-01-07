@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.md,.github/ISSUE_TEMPLATE/**"
+applyTo: "**/*.md, .github/ISSUE_TEMPLATE/**"
 ---
 
 # Markdown and Documentation Guidelines
@@ -28,8 +28,8 @@ applyTo: "**/*.md,.github/ISSUE_TEMPLATE/**"
 
 ### Issue Templates
 - Ensure examples in placeholders match the context:
-  - Desktop OS: Windows, macOS, Linux (NOT iOS/Android)
-  - Mobile OS: iOS, Android (NOT Windows/macOS/Linux)
+  - Desktop OS: Windows, macOS, Linux (NOT iOS or Android)
+  - Mobile OS: iOS, Android (NOT Windows, macOS, or Linux)
 - Use consistent formatting for all fields within a section
 - Include colons after field names for key-value pairs
 - Keep placeholder text clear and relevant
