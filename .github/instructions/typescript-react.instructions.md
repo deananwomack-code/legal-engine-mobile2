@@ -9,7 +9,7 @@ applyTo: "**/*.{ts,tsx}"
 ### Type Definitions
 - Use `interface` for object shapes that might be extended
 - Use `type` for unions, intersections, and mapped types
-- Convert empty interfaces extending a single type to type aliases (ESLint rule, better performance):
+- Convert empty interfaces extending a single type to type aliases (per ESLint rule, cleaner code):
   ```typescript
   // ❌ Avoid
   interface MyProps extends BaseProps {}
