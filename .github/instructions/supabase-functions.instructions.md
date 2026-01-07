@@ -14,13 +14,13 @@ excludeAgent: ""
 - Use Deno-style imports with full URLs or npm: specifier
 - Import from Supabase Deno modules:
   ```typescript
-  import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
   ```
+- Modern Deno (1.30+) has built-in `Deno.serve()` that doesn't require imports
 
 ## Function Structure
 - Export a single handler function
-- Use `Deno.serve()` for HTTP handling
+- Use built-in `Deno.serve()` for HTTP handling (no import needed)
 - Handle CORS properly for browser requests
 - Return Response objects with appropriate headers
 
