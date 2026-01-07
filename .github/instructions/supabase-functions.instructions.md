@@ -1,6 +1,5 @@
 ---
 applyTo: "supabase/functions/**/*.ts"
-excludeAgent: ""
 ---
 
 # Supabase Edge Functions (Deno) Guidelines
@@ -12,9 +11,9 @@ excludeAgent: ""
 
 ## Import Patterns
 - Use Deno-style imports with full URLs or npm: specifier
-- Import from Supabase Deno modules:
+- Import from Supabase Deno modules (use specific versions for reproducibility):
   ```typescript
-  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
   ```
 - Modern Deno (1.30+) has built-in `Deno.serve()` that doesn't require imports
 
