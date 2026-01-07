@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.md, .github/ISSUE_TEMPLATE/**"
+applyTo: "**/*.md,.github/ISSUE_TEMPLATE/**"
 ---
 
 # Markdown and Documentation Guidelines
